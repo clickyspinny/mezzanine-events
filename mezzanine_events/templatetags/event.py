@@ -21,7 +21,10 @@ def google_calendar_url(event):
         return ''
     title = quote(event.title)
     start_date = get_utc(event.start_datetime()).strftime("%Y%m%dT%H%M%SZ")
-    end_date = get_utc(event.end_datetime()).strftime("%Y%m%dT%H%M%SZ")
+    try:
+        end_date = get_utc(event.end_datetime()).strftime("%Y%m%dT%H%M%SZ")
+    except:
+        end_date = None
     url = _get_current_domain() + event.get_absolute_url()
     location = quote(event.mappable_location)
     return "http://www.google.com/calendar/event?action=TEMPLATE&text={title}&dates={start_date}/{end_date}&sprop=website:{url}&location={location}&trp=true".format(**locals())
@@ -57,7 +60,7 @@ class GoogleStaticMapNode (template.Node):
             scale = 2
         else:
             scale = 1
-        return "<img src='http://maps.googleapis.com/maps/api/staticmap?size={width}x{height}&scale={scale}&format=png&markers={marker}&sensor=false&zoom={zoom}' width='{width}' height='{height}' />".format(**locals())
+        return "<img src='http://maps.googleapis.com/maps/api/staticmap?size={width}x{height}&scale={scale}&format=png&markers={marker}&sensor=false&zoom={zoom}'  />".format(**locals())
 
 @register.filter(is_safe=True)
 def icalendar_url(obj, proto_param=None):

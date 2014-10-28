@@ -15,6 +15,8 @@ class EventAdmin (PageAdmin):
         deepcopy(PageAdmin.fieldsets[1]),
     )
 
-admin.site.register(Event, EventAdmin)
+#admin.site.register(Event, EventAdmin)
+admin.site.register(Event)
 
-admin.site.register(EventContainer, PageAdmin)
+#admin.site.register(EventContainer, PageAdmin)
+admin.site.register(EventContainer)

@@ -8,6 +8,7 @@ from django.contrib.sites.models import Site
 from datetime import timedelta, datetime as dt
 from mezzanine.utils.sites import current_site_id
 from mezzanine.conf import settings
+from django.contrib.auth.models import User
 
 def _get_current_domain():
     return Site.objects.get(id=current_site_id()).domain
@@ -15,16 +16,19 @@ def _get_current_domain():
 class Event(Page, RichText):
     date = models.DateField()
     start_time = models.TimeField()
-    end_date = models.DateField()
-    end_time = models.TimeField()
-    speakers = models.TextField(blank=True, help_text="Leave blank if not relevant. Write one name per line.")
+    end_date = models.DateField(blank=True, null=True)
+    end_time = models.TimeField(blank=True, null=True)
+    speakers = models.TextField(blank=True, null=True, help_text="Leave blank if not relevant. Write one name per line.")
     location = models.TextField()
     mappable_location = models.CharField(max_length=128, blank=True, help_text="This address will be used to calculate latitude and longitude. Leave blank and set Latitude and Longitude to specify the location yourself, or leave all three blank to auto-fill from the Location field.")
     lat = models.DecimalField(max_digits=10, decimal_places=7, blank=True, null=True, verbose_name="Latitude", help_text="Calculated automatically if mappable location is set.")
     lon = models.DecimalField(max_digits=10, decimal_places=7, blank=True, null=True, verbose_name="Longitude", help_text="Calculated automatically if mappable location is set.")
     rsvp = models.TextField(blank=True, help_text="RSVP information. Leave blank if not relevant. Emails will be converted into links.")
+    users = models.ManyToManyField("auth.User")
 
     def speakers_list(self):
+        if not self.speakers:
+            return None
         return [x for x in self.speakers.split("\n") if x.strip() != ""]
 
     def start_datetime(self):
