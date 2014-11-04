@@ -40,14 +40,11 @@ class Event(Page, RichText):
     def clean(self):
         super(Event, self).clean()
 
-        if not self.end_date:
+        if not self.end_date or self.date > self.end_date:
             self.end_date = self.date
 
-        if self.date > self.end_date:
-            raise ValidationError("Start date must be sooner than end date.")
-
         if self.start_time and self.end_time and self.date == self.end_date and self.start_time > self.end_time:
-            raise ValidationError("Start time must be sooner than end time.")
+            self.end_time = self.start_time
 
         if self.lat and not self.lon:
             raise ValidationError("Longitude required if specifying latitude.")
